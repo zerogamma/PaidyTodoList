@@ -68,6 +68,11 @@ export default function Main() {
     TEXT_REF?.current && TEXT_REF.current.focus();
   };
 
+  const handleResetState = () => {
+    if (update.state)
+      setUpdate(UPDATE_INITIAL_STATE)
+  }
+
   return (
     <View style={styles.container}>
       <LinearGradient
