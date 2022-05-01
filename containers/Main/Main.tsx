@@ -1,34 +1,27 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 // Components
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 // Custom Components
 import Task from "../../components/Task";
 // Styles
 import { styles } from "./style";
-// Utils
-import colors from "../../assets/colors/color";
-import { useState } from "react";
 import { todoType } from "./Main.interface";
-import { useEffect } from "react";
-import { useRef } from "react";
 
 const UPDATE_INITIAL_STATE = {
   state: false,
   position: 0,
 };
 
-export default function Main() {
+export function Main() {
   const [task, setTask] = useState<string>("");
   const [todoList, setTodoList] = useState<todoType[]>([]);
   const [newItemId, setNewItemId] = useState<number>(0);
@@ -48,7 +41,7 @@ export default function Main() {
       copyList[update.position].text = task;
       setTodoList(copyList);
       setTask("");
-      setUpdate(UPDATE_INITIAL_STATE)
+      setUpdate(UPDATE_INITIAL_STATE);
       return;
     }
     setTodoList([...todoList, { id: newItemId, text: task }]);
@@ -68,17 +61,8 @@ export default function Main() {
     TEXT_REF?.current && TEXT_REF.current.focus();
   };
 
-  const handleResetState = () => {
-    if (update.state)
-      setUpdate(UPDATE_INITIAL_STATE)
-  }
-
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={colors.primaryGradient}
-        style={styles.background}
-      />
       <View style={styles.taskWrapper}>
         <Text style={styles.title}>Todo List</Text>
         <View style={styles.items}>

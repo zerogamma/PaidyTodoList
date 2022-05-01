@@ -7,13 +7,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.primary,
   },
-  background: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    height: "100%",
-  },
   taskWrapper: {
     paddingTop: 120,
     paddingHorizontal: 40,
