@@ -55,6 +55,7 @@ export function Main() {
       setUpdate(UPDATE_INITIAL_STATE);
       return;
     }
+    
     apiTask.addNewTask({ id: newItemId, text: task });
 
     // use of internal state to add task.

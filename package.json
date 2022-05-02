@@ -20,7 +20,8 @@
       "!**/coverage/**",
       "!**/node_modules/**",
       "!**/babel.config.js",
-      "!**/jest.setup.js"
+      "!**/jest.setup.js",
+      "!**/*.utils.{js,jsx,ts,tsx}"
     ]
   },
   "dependencies": {

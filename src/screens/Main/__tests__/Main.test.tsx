@@ -1,6 +1,7 @@
 import React from "react";
 import { Main } from "../Main";
-import { render, fireEvent, cleanup } from "@testing-library/react-native";
+import { render } from "../../../context/Main.test-utils";
+import { fireEvent, cleanup, act } from "@testing-library/react-native";
 
 const MainComponent = () => {
   return <Main />;
@@ -22,9 +23,8 @@ describe("<TaskComponent />", () => {
     expect(inputComp.props.value).toEqual(testText);
   });
   it("Should add a new Task", () => {
-    const { getByTestId, getByText, getByPlaceholderText } = render(
-      <MainComponent />
-    );
+    const { getByTestId, getByText, getByPlaceholderText } =
+      render(<MainComponent />);
     const newTaskTest = "testing new Task";
     const inputComp = getByPlaceholderText("Enter new task");
     fireEvent.changeText(inputComp, newTaskTest);
