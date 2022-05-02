@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+// Context
+import todoContext from "../../context/context";
 // Components
 import { Ionicons } from "@expo/vector-icons";
 // Custom Components
@@ -18,46 +20,61 @@ import { todoType } from "./Main.interface";
 
 const UPDATE_INITIAL_STATE = {
   state: false,
-  position: 0,
+  id: 0,
 };
 
 export function Main() {
   const [task, setTask] = useState<string>("");
   const [todoList, setTodoList] = useState<todoType[]>([]);
   const [newItemId, setNewItemId] = useState<number>(0);
-  const [update, setUpdate] = useState<{ state: boolean; position: number }>(
+  const [update, setUpdate] = useState<{ state: boolean; id: number }>(
     UPDATE_INITIAL_STATE
   );
+  const apiTask = useContext(todoContext);
   const TEXT_REF = useRef<TextInput>(null);
 
   useEffect(() => {
-    setNewItemId(todoList.length + 1);
-  }, []);
+    if (todoList.length) {
+      setNewItemId(todoList[todoList.length - 1].id + 1);
+    }
+  }, [todoList]);
+
+  useEffect(() => {
+    if (apiTask.todoList) setTodoList(apiTask.todoList);
+  }, [apiTask.todoList]);
 
   const handleAddTask = () => {
     Keyboard.dismiss();
     if (update.state) {
-      let copyList = [...todoList];
-      copyList[update.position].text = task;
-      setTodoList(copyList);
+      apiTask.updateTask({ id: update.id, text: task });
+      // use of internal state to update task.
+      // let copyList = [...todoList];
+      // copyList[update.id].text = task;
+      // setTodoList(copyList);
       setTask("");
       setUpdate(UPDATE_INITIAL_STATE);
       return;
     }
-    setTodoList([...todoList, { id: newItemId, text: task }]);
+    apiTask.addNewTask({ id: newItemId, text: task });
+
+    // use of internal state to add task.
+    // setTodoList([...todoList, { id: newItemId, text: task }]);
+
     setNewItemId(newItemId + 1);
     setTask("");
   };
 
-  const handleRemoveTask = (index: number) => {
-    const copyList = [...todoList];
-    copyList.splice(index, 1);
-    setTodoList(copyList);
+  const handleRemoveTask = (id: number) => {
+    apiTask.deleteTask(id);
+    // use of internal state to remove task.
+    // const copyList = [...todoList];
+    // copyList.splice(id, 1);
+    // setTodoList(copyList);
   };
 
   const handleUpdateTask = (index: number, todo: string) => {
     setTask(todo);
-    setUpdate({ state: true, position: index });
+    setUpdate({ state: true, id: index });
     TEXT_REF?.current && TEXT_REF.current.focus();
   };
 
@@ -70,7 +87,8 @@ export function Main() {
             <Task
               key={todo.id}
               todo={todo.text}
-              position={index}
+              position={index} // for internal state use.
+              id={todo.id}
               remove={handleRemoveTask}
               update={handleUpdateTask}
             />
@@ -89,7 +107,7 @@ export function Main() {
           value={task}
           onChangeText={setTask}
         />
-        <TouchableOpacity onPress={handleAddTask}>
+        <TouchableOpacity onPress={handleAddTask} testID="addTask">
           <Ionicons
             name={update.state ? "create" : "add-circle"}
             style={styles.addText}

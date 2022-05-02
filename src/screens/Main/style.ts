@@ -1,11 +1,10 @@
 import { StyleSheet } from "react-native";
 // Utils
-import colors from "../../assets/colors/color";
+import colors from "../../../assets/colors/color";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary,
   },
   taskWrapper: {
     paddingTop: 120,
