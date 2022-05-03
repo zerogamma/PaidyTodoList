@@ -17,16 +17,24 @@ exports[`<TaskComponent /> renders correctly 1`] = `
   <View
     style={
       Object {
-        "alignItems": "center",
         "flexDirection": "row",
-        "flexWrap": "wrap",
       }
     }
   >
     <View
+      accessibilityRole="checkbox"
+      accessibilityState={
+        Object {
+          "checked": false,
+          "disabled": undefined,
+        }
+      }
       accessible={true}
+      collapsable={false}
       focusable={true}
+      onBlur={[Function]}
       onClick={[Function]}
+      onFocus={[Function]}
       onResponderGrant={[Function]}
       onResponderMove={[Function]}
       onResponderRelease={[Function]}
@@ -34,17 +42,56 @@ exports[`<TaskComponent /> renders correctly 1`] = `
       onResponderTerminationRequest={[Function]}
       onStartShouldSetResponder={[Function]}
       style={
+        Array [
+          Object {
+            "borderColor": "#657786",
+            "borderRadius": 2,
+            "borderWidth": 2,
+            "height": 20,
+            "width": 20,
+          },
+          undefined,
+          false,
+          false,
+          undefined,
+          false,
+        ]
+      }
+    />
+    <View
+      style={
         Object {
-          "opacity": 1,
+          "alignItems": "center",
+          "flexDirection": "row",
+          "flexWrap": "wrap",
+          "paddingHorizontal": 10,
         }
       }
-      testID="updateTO"
     >
-      <Text
-        style={Object {}}
+      <View
+        accessible={true}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "opacity": 1,
+            "width": "80%",
+          }
+        }
+        testID="updateTO"
       >
-        test
-      </Text>
+        <Text
+          style={Object {}}
+        >
+          test
+        </Text>
+      </View>
     </View>
   </View>
   <View
