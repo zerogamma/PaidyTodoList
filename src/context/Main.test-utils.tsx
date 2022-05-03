@@ -2,6 +2,7 @@ import React from "react";
 import { render, RenderOptions } from "@testing-library/react-native";
 import ContexProvider from "./ContextProvider";
 
+// Is a util made to make a gustom render that use Context provider to provide data.
 const AllTheProviders = (props: {
   children:
     | boolean

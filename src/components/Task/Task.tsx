@@ -6,6 +6,9 @@ import { Ionicons } from "@expo/vector-icons";
 // Styles
 import { styles } from "./style";
 
+// most of the function to manipulate the data are provided from the container to have all the data manipulation on
+// one place.
+// all parameter are important other than the check by default is false.
 export const Task = ({
   todo,
   id,
@@ -18,18 +21,21 @@ export const Task = ({
 
   useEffect(() => {
     setIsChecked(checked);
-  }, []);
+  }, [checked]);
 
   const handleChangeCheckBox = (value: boolean) => {
-    setIsChecked(value);
     updateCheck(value, id);
   };
 
   return (
     <View style={styles.item}>
+      {/* Wrapped in two group so you can use justifyContent: "space-between" to make
+      the remove buttom to be far on right while keeping the checkBox and text on the left. */}
       <View style={styles.todoItemWrapper}>
         <CheckBox value={isChecked} onValueChange={handleChangeCheckBox} />
         <View style={styles.todoItem}>
+          {/* Added a style TouchableOpacity to add more with to cover more space and not just the word
+          to trigger the edit function */}
           <TouchableOpacity
             style={styles.check}
             testID="updateTO"

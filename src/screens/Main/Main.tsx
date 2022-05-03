@@ -22,12 +22,16 @@ import { styles } from "./style";
 import { todoType } from "./Main.interface";
 import { orderDesc } from "../../utils/utils";
 
+// initial update value used to reset after the update is completed.
 const UPDATE_INITIAL_STATE = {
   state: false,
   id: 0,
 };
 
 export function Main() {
+  // Global state mainly data
+  const apiTask = useContext(todoContext);
+  // inner state management
   const [task, setTask] = useState<string>("");
   const [todoList, setTodoList] = useState<todoType[]>([]);
   const [newItemId, setNewItemId] = useState<number>(0);
@@ -35,16 +39,15 @@ export function Main() {
     UPDATE_INITIAL_STATE
   );
   const [isKeyboardVisible, setKeyboardVisible] = useState<boolean>(false);
-  const apiTask = useContext(todoContext);
+
+  // reference to get control specific component in this case the input to trigger is there and update
   const TEXT_REF = useRef<TextInput>(null);
-  const FLATLIST_REF = useRef<FlatList>(null);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       () => {
         setKeyboardVisible(true);
-        FLATLIST_REF?.current?.scrollToEnd();
       }
     );
     const keyboardDidHideListener = Keyboard.addListener(
@@ -59,20 +62,31 @@ export function Main() {
     };
   }, []);
 
+  // useEffect used to get ids for the new item. this if there is API no need to do it.
+  // just using number to not make super complex the ID the ideal is have a better type or use an UUID
   useEffect(() => {
     if (todoList.length) {
       setNewItemId(todoList[0].id + 1);
     }
   }, [todoList]);
 
+  // useEffect that check if there are any change on the data from the context
+  // and added a sorting desc to always display the new item at the top.
   useEffect(() => {
     if (apiTask.todoList) {
       setTodoList(apiTask.todoList.sort(orderDesc));
     }
   }, [apiTask.todoList]);
 
+  // sharring logic of the AddTask they can be separete but if I separate the component of the icon
+  // but in this case for simplicity just used the same one and changed the icon look
+  // thats why when the tigger of the update i made a state update to let know to the component is in update mode
+  // every array manipulation is done in the context to make it close to what would happend if you have apollo/graph or
+  // API where is more clean to have persistency layer.
   const handleAddTask = () => {
+    // close the keyboard
     Keyboard.dismiss();
+    // the update function with a return to separate with the add logic.
     if (update.state) {
       apiTask.updateTask(task, update.id);
       setTask("");
@@ -83,20 +97,24 @@ export function Main() {
     setTask("");
   };
 
+  // remove
   const handleRemoveTask = (id: number) => {
     apiTask.deleteTask(id);
   };
 
+  // check
   const handleStatusUpdate = (status: boolean, taskId: number) => {
     apiTask.updateTaskState(status,taskId);
   };
 
+  // update
   const handleUpdateTask = (index: number, todo: string) => {
     setTask(todo);
     setUpdate({ state: true, id: index });
     TEXT_REF?.current && TEXT_REF.current.focus();
   };
 
+  // code to give animation loading of the list.
   const translateX = useRef(
     new Animated.Value(Dimensions.get("window").height)
   ).current;
@@ -109,6 +127,7 @@ export function Main() {
     }).start();
   });
 
+  // function to add animation view and used by FlatList to populate himself.
   const ItemView = ({ item, index }: { item: todoType; index: number }) => {
     return (
       <Animated.View style={{ transform: [{ translateY: translateX }] }}>
@@ -133,7 +152,6 @@ export function Main() {
           style={[styles.items, { height: isKeyboardVisible ? "80%" : "88%" }]}
         >
           <FlatList
-            ref={FLATLIST_REF}
             data={todoList}
             renderItem={ItemView}
             keyExtractor={(item, index) => index.toString()}

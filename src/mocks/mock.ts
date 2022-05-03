@@ -7,6 +7,6 @@ export const dummyData = [
     {
         id: 1,
         text: "Makes Events",
-        status: false
+        status: true
     }
 ]

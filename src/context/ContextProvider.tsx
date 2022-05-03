@@ -15,9 +15,12 @@ export const ContextProvider = (props: {
 
   useEffect(() => {
     // Here is where we can fetch data from a API or DB
+    // you can provide apollo data too. but using apollo dont need to do this and you can update using their own cache
     setTasks(dummyData);
   }, []);
 
+
+  // different function like Redux reducer to modify the data.
   const addNewTask = (task: taskType) => {
     const list = [...tasks];
     list.push(task)
