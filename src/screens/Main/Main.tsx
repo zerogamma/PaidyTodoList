@@ -87,7 +87,11 @@ export function Main() {
     // close the keyboard
     Keyboard.dismiss();
     // cancel if there is no text in the input.
-    if(!task) return
+    if(!task) {
+      // retun to initial state if was tigger by and update
+      update.state && setUpdate(UPDATE_INITIAL_STATE);
+      return
+    }
     
     // the update function with a return to separate with the add logic.
     if (update.state) {
