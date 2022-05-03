@@ -86,6 +86,9 @@ export function Main() {
   const handleAddTask = () => {
     // close the keyboard
     Keyboard.dismiss();
+    // cancel if there is no text in the input.
+    if(!task) return
+    
     // the update function with a return to separate with the add logic.
     if (update.state) {
       apiTask.updateTask(task, update.id);
