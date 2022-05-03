@@ -20,24 +20,24 @@ export const Task = ({
     setIsChecked(checked);
   }, []);
 
-  const handleChangeCheckBox = (value:boolean) => {
-    setIsChecked(value)
-    updateCheck(value, id)
-  }
+  const handleChangeCheckBox = (value: boolean) => {
+    setIsChecked(value);
+    updateCheck(value, id);
+  };
 
   return (
     <View style={styles.item}>
-      <View>
-        <CheckBox value={isChecked} onValueChange={handleChangeCheckBox}/>
-      </View>
-      <View style={styles.todoItem}>
-        <TouchableOpacity
-          style={styles.check}
-          testID="updateTO"
-          onPress={() => update(id, todo)}
-        >
-          <Text style={styles.todoText}>{todo}</Text>
-        </TouchableOpacity>
+      <View style={styles.todoItemWrapper}>
+        <CheckBox value={isChecked} onValueChange={handleChangeCheckBox} />
+        <View style={styles.todoItem}>
+          <TouchableOpacity
+            style={styles.check}
+            testID="updateTO"
+            onPress={() => update(id, todo)}
+          >
+            <Text style={styles.todoText}>{todo}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <TouchableOpacity
         style={styles.iconWrapper}

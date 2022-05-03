@@ -13,12 +13,18 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 20,
   },
+  todoItemWrapper: {
+    flexDirection: "row",
+  },
   todoItem: {
+    paddingHorizontal: 10,
     flexDirection: "row",
     alignItems: "center",
     flexWrap: "wrap",
   },
-  check: {},
+  check: {
+    width: "80%",
+  },
   todoText: {},
   button: {
     color: colors.secondary,
