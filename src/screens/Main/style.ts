@@ -14,7 +14,9 @@ export const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-  items: {},
+  items: {
+    paddingVertical: 15,
+  },
   inputTaskWrapper: {
     position: "absolute",
     bottom: 30,
@@ -33,8 +35,11 @@ export const styles = StyleSheet.create({
     borderColor: colors.third,
     borderWidth: 1,
   },
+  iconWrapper: {
+  },
   addText: {
     color: colors.third,
-    fontSize: 60,
+    fontSize: 55,
+    paddingLeft: 4,
   },
 });

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Context from "./context";
 import { taskType } from "./context.interface";
-import { dummyData } from "./mock";
+import { dummyData } from "../mocks/mock";
 export const ContextProvider = (props: {
   children:
     | boolean
@@ -19,15 +19,25 @@ export const ContextProvider = (props: {
   }, []);
 
   const addNewTask = (task: taskType) => {
-    const list = [...tasks, task];
+    const list = [...tasks];
+    list.push(task)
     setTasks(list);
   };
 
-  const updateTask = (task: taskType) => {
+  const updateTask = (taskText: string, taskId: number) => {
     const list = [...tasks];
     setTasks(
       list.map((listTask) =>
-        task.id === listTask.id ? { ...listTask, text: task.text } : listTask
+        taskId === listTask.id ? { ...listTask, text: taskText } : listTask
+      )
+    );
+  };
+
+  const updateTaskState = (status: boolean, taskId: number) => {
+    const list = [...tasks];
+    setTasks(
+      list.map((listTask) =>
+        taskId === listTask.id ? { ...listTask, status: status } : listTask
       )
     );
   };
@@ -44,6 +54,7 @@ export const ContextProvider = (props: {
         addNewTask: addNewTask,
         deleteTask: deleteTask,
         updateTask: updateTask,
+        updateTaskState: updateTaskState,
       }}
     >
       {props.children}

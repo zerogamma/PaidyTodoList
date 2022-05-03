@@ -1,4 +1,5 @@
 export interface taskType {
-    id:number,
-    text: string
+  id: number;
+  text: string;
+  status: boolean;
 }

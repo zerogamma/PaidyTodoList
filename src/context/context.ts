@@ -5,5 +5,6 @@ export default React.createContext({
   todoList: [] as taskType[],
   addNewTask: (task: taskType) => {},
   deleteTask: (taskId: number) => {},
-  updateTask: (task: taskType) => {},
+  updateTask: (taskText: string, taskId: number) => {},
+  updateTaskState: (status: boolean, taskId: number) => {},
 });

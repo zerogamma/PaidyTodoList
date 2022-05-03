@@ -7,6 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  FlatList,
+  Animated,
+  Dimensions,
 } from "react-native";
 // Context
 import todoContext from "../../context/context";
@@ -17,6 +20,7 @@ import Task from "../../components/Task";
 // Styles
 import { styles } from "./style";
 import { todoType } from "./Main.interface";
+import { orderDesc } from "../../utils/utils";
 
 const UPDATE_INITIAL_STATE = {
   state: false,
@@ -30,47 +34,61 @@ export function Main() {
   const [update, setUpdate] = useState<{ state: boolean; id: number }>(
     UPDATE_INITIAL_STATE
   );
+  const [isKeyboardVisible, setKeyboardVisible] = useState<boolean>(false);
   const apiTask = useContext(todoContext);
   const TEXT_REF = useRef<TextInput>(null);
+  const FLATLIST_REF = useRef<FlatList>(null);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+        FLATLIST_REF?.current?.scrollToEnd();
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (todoList.length) {
-      setNewItemId(todoList[todoList.length - 1].id + 1);
+      setNewItemId(todoList[0].id + 1);
     }
   }, [todoList]);
 
   useEffect(() => {
-    if (apiTask.todoList) setTodoList(apiTask.todoList);
+    if (apiTask.todoList) {
+      setTodoList(apiTask.todoList.sort(orderDesc));
+    }
   }, [apiTask.todoList]);
 
   const handleAddTask = () => {
     Keyboard.dismiss();
     if (update.state) {
-      apiTask.updateTask({ id: update.id, text: task });
-      // use of internal state to update task.
-      // let copyList = [...todoList];
-      // copyList[update.id].text = task;
-      // setTodoList(copyList);
+      apiTask.updateTask(task, update.id);
       setTask("");
       setUpdate(UPDATE_INITIAL_STATE);
       return;
     }
-    
-    apiTask.addNewTask({ id: newItemId, text: task });
-
-    // use of internal state to add task.
-    // setTodoList([...todoList, { id: newItemId, text: task }]);
-
-    setNewItemId(newItemId + 1);
+    apiTask.addNewTask({ id: newItemId, text: task, status: false });
     setTask("");
   };
 
   const handleRemoveTask = (id: number) => {
     apiTask.deleteTask(id);
-    // use of internal state to remove task.
-    // const copyList = [...todoList];
-    // copyList.splice(id, 1);
-    // setTodoList(copyList);
+  };
+
+  const handleStatusUpdate = (status: boolean, taskId: number) => {
+    apiTask.updateTaskState(status,taskId);
   };
 
   const handleUpdateTask = (index: number, todo: string) => {
@@ -79,21 +97,47 @@ export function Main() {
     TEXT_REF?.current && TEXT_REF.current.focus();
   };
 
+  const translateX = useRef(
+    new Animated.Value(Dimensions.get("window").height)
+  ).current;
+
+  useEffect(() => {
+    Animated.timing(translateX, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
+  });
+
+  const ItemView = ({ item, index }: { item: todoType; index: number }) => {
+    return (
+      <Animated.View style={{ transform: [{ translateY: translateX }] }}>
+        <Task
+          key={item.id}
+          todo={item.text}
+          id={item.id}
+          checked={item.status}
+          remove={handleRemoveTask}
+          update={handleUpdateTask}
+          updateCheck={handleStatusUpdate}
+        />
+      </Animated.View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.taskWrapper}>
         <Text style={styles.title}>Todo List</Text>
-        <View style={styles.items}>
-          {todoList.map((todo, index) => (
-            <Task
-              key={todo.id}
-              todo={todo.text}
-              position={index} // for internal state use.
-              id={todo.id}
-              remove={handleRemoveTask}
-              update={handleUpdateTask}
-            />
-          ))}
+        <View
+          style={[styles.items, { height: isKeyboardVisible ? "80%" : "88%" }]}
+        >
+          <FlatList
+            ref={FLATLIST_REF}
+            data={todoList}
+            renderItem={ItemView}
+            keyExtractor={(item, index) => index.toString()}
+          />
         </View>
       </View>
 
@@ -109,10 +153,12 @@ export function Main() {
           onChangeText={setTask}
         />
         <TouchableOpacity onPress={handleAddTask} testID="addTask">
-          <Ionicons
-            name={update.state ? "create" : "add-circle"}
-            style={styles.addText}
-          />
+          <View style={styles.iconWrapper}>
+            <Ionicons
+              name={update.state ? "create" : "add-circle"}
+              style={styles.addText}
+            />
+          </View>
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </View>
